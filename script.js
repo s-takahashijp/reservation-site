@@ -4,7 +4,7 @@ const loadingElement = document.getElementById('loading');
 const reservationListElement = document.getElementById('reservation-list');
 const reservationForm = document.getElementById('reservation-form');
 const scheduleSelect = document.getElementById('schedule');
-const emailInput = document.getElementById('email');
+// const emailInput = document.getElementById('email');
 const submitButton = document.getElementById('submit-button');
 const formMessage = document.getElementById('form-message');
 
@@ -90,12 +90,12 @@ reservationForm.addEventListener('submit', async (event) => {
     formMessage.className = 'message'; // メッセージクラスをリセット
     formMessage.textContent = '予約処理中...';
 
-    const email = emailInput.value;
+    // const email = emailInput.value;
     const selectedSchedule = scheduleSelect.value;
 
-    if (!email || !selectedSchedule) {
+    if (!selectedSchedule) {
         formMessage.className = 'message error';
-        formMessage.textContent = 'メールアドレスと希望日程をすべて入力してください。';
+        formMessage.textContent = '希望日程を選択してください。'; // メッセージを変更
         submitButton.disabled = false;
         return;
     }
@@ -108,7 +108,7 @@ reservationForm.addEventListener('submit', async (event) => {
             },
             body: new URLSearchParams({
                 action: 'reserve', // GAS側で処理を識別するためのアクション名
-                email: email,
+                // email: email,
                 schedule: selectedSchedule
             })
         });
@@ -121,8 +121,8 @@ reservationForm.addEventListener('submit', async (event) => {
 
         if (result.success) {
             formMessage.className = 'message success';
-            formMessage.textContent = result.message || '予約が完了しました！確認メールをご確認ください。';
-            emailInput.value = ''; // フォームをクリア
+            formMessage.textContent = result.message || '予約が完了しました！';
+            // emailInput.value = ''; // フォームをクリア
             scheduleSelect.value = ''; // 選択をリセット
             // 予約が成功したら、最新の定員情報を再取得して表示を更新
             fetchReservationSlots();
