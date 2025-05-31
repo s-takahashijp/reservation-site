@@ -4,7 +4,7 @@ const loadingElement = document.getElementById('loading');
 const reservationListElement = document.getElementById('reservation-list');
 const reservationForm = document.getElementById('reservation-form');
 const scheduleSelect = document.getElementById('schedule');
-// const emailInput = document.getElementById('email');
+// const emailInput = document.getElementById('email'); // メールアドレスなし
 const submitButton = document.getElementById('submit-button');
 const formMessage = document.getElementById('form-message');
 
@@ -18,10 +18,10 @@ async function fetchReservationSlots() {
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
-        const data = await response.json();
+        const data = await response.json(); // GASからの応答をJSONとして解析
         availableSlots = data; // 取得したデータを保存
-        displayReservationSlots(data);
-        populateScheduleDropdown(data);
+        displayReservationSlots(data); // 予約可能な日程を画面に表示
+        populateScheduleDropdown(data); // プルダウンに日程を追加
     } catch (error) {
         console.error("予約情報の取得に失敗しました:", error);
         reservationListElement.innerHTML = '<p class="error">予約情報の読み込みに失敗しました。時間をおいて再度お試しください。</p>';
@@ -42,13 +42,14 @@ function displayReservationSlots(slots) {
     slots.forEach(slot => {
         const slotDiv = document.createElement('div');
         slotDiv.classList.add('reservation-slot');
+        // 定員が0以下の場合は満員クラスを追加
         if (slot.capacity <= 0) {
             slotDiv.classList.add('full');
         }
 
         const dateSpan = document.createElement('span');
         dateSpan.classList.add('date');
-        dateSpan.textContent = formatDisplayDate(slot.date);
+        dateSpan.textContent = slot.date; // ★修正箇所: GASから受け取った文字列をそのまま表示★
 
         const capacitySpan = document.createElement('span');
         capacitySpan.classList.add('capacity');
@@ -66,8 +67,8 @@ function populateScheduleDropdown(slots) {
     slots.forEach(slot => {
         if (slot.capacity > 0) { // 定員が残っている日程のみ追加
             const option = document.createElement('option');
-            option.value = slot.date; // 日程を値として設定
-            option.textContent = `${formatDisplayDate(slot.date)} (残り: ${slot.capacity})`;
+            option.value = slot.date; // ★修正箇所: value にはGASから受け取った文字列をそのままセット★
+            option.textContent = `${slot.date} (残り: ${slot.capacity})`; // ★修正箇所: 表示もそのまま★
             scheduleSelect.appendChild(option);
         }
     });
@@ -82,28 +83,6 @@ function populateScheduleDropdown(slots) {
     }
 }
 
-function formatDisplayDate(dateString) {
-    // 例: "2025/06/03 16:30" を "6月3日 16:30 ~ 17:00" に変換
-    const date = new Date(dateString);
-    if (isNaN(date.getTime())) { // 無効な日付の場合
-        return dateString;
-    }
-
-    const month = date.getMonth() + 1;
-    const day = date.getDate();
-    const startHour = date.getHours();
-    const startMinute = date.getMinutes();
-
-    // 終了時間を開始時間から30分後と仮定
-    const endDateTime = new Date(date.getTime() + 30 * 60 * 1000); // 30分追加
-    const endHour = endDateTime.getHours();
-    const endMinute = endDateTime.getMinutes();
-
-    const formatTime = (h, m) => `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
-
-    return `${month}月${day}日 ${formatTime(startHour, startMinute)} ~ ${formatTime(endHour, endMinute)}`;
-}
-
 
 // 予約フォームの送信処理
 reservationForm.addEventListener('submit', async (event) => {
@@ -113,12 +92,12 @@ reservationForm.addEventListener('submit', async (event) => {
     formMessage.className = 'message'; // メッセージクラスをリセット
     formMessage.textContent = '予約処理中...';
 
-    // const email = emailInput.value;
-    const selectedSchedule = scheduleSelect.value;
+    const selectedSchedule = scheduleSelect.value; // ★修正箇所: プルダウンの値をそのまま取得★
 
+    // 選択が行われていない場合のバリデーション
     if (!selectedSchedule) {
         formMessage.className = 'message error';
-        formMessage.textContent = '希望日程を選択してください。'; // メッセージを変更
+        formMessage.textContent = '希望日程を選択してください。'; 
         submitButton.disabled = false;
         return;
     }
@@ -131,8 +110,7 @@ reservationForm.addEventListener('submit', async (event) => {
             },
             body: new URLSearchParams({
                 action: 'reserve', // GAS側で処理を識別するためのアクション名
-                // email: email,
-                schedule: selectedSchedule
+                schedule: selectedSchedule // ★修正箇所: 取得した値をそのままGASに送信★
             })
         });
 
@@ -145,7 +123,6 @@ reservationForm.addEventListener('submit', async (event) => {
         if (result.success) {
             formMessage.className = 'message success';
             formMessage.textContent = result.message || '予約が完了しました！';
-            // emailInput.value = ''; // フォームをクリア
             scheduleSelect.value = ''; // 選択をリセット
             // 予約が成功したら、最新の定員情報を再取得して表示を更新
             fetchReservationSlots();
