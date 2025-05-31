@@ -1,4 +1,4 @@
-const GAS_WEB_APP_URL = 'https://s-takahashijp.github.io/reservation-site'; // ★ここをあなたのGASウェブアプリのURLに置き換える★
+const GAS_WEB_APP_URL = 'AKfycbwqJY9XIEQpWO0bg73gNrb_LSFwYuPhiKbP2JrUXK2k'; // ★ここをあなたのGASウェブアプリのURLに置き換える★
 
 const loadingElement = document.getElementById('loading');
 const reservationListElement = document.getElementById('reservation-list');
