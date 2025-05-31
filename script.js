@@ -48,7 +48,7 @@ function displayReservationSlots(slots) {
 
         const dateSpan = document.createElement('span');
         dateSpan.classList.add('date');
-        dateSpan.textContent = slot.date;
+        dateSpan.textContent = formatDisplayDate(slot.date);
 
         const capacitySpan = document.createElement('span');
         capacitySpan.classList.add('capacity');
@@ -67,7 +67,7 @@ function populateScheduleDropdown(slots) {
         if (slot.capacity > 0) { // 定員が残っている日程のみ追加
             const option = document.createElement('option');
             option.value = slot.date; // 日程を値として設定
-            option.textContent = `${slot.date} (残り: ${slot.capacity})`;
+            option.textContent = `${formatDisplayDate(slot.date)} (残り: ${slot.capacity})`;
             scheduleSelect.appendChild(option);
         }
     });
@@ -81,6 +81,29 @@ function populateScheduleDropdown(slots) {
         formMessage.textContent = ''; // メッセージをクリア
     }
 }
+
+function formatDisplayDate(dateString) {
+    // 例: "2025/06/03 16:30" を "6月3日 16:30 ~ 17:00" に変換
+    const date = new Date(dateString);
+    if (isNaN(date.getTime())) { // 無効な日付の場合
+        return dateString;
+    }
+
+    const month = date.getMonth() + 1;
+    const day = date.getDate();
+    const startHour = date.getHours();
+    const startMinute = date.getMinutes();
+
+    // 終了時間を開始時間から30分後と仮定
+    const endDateTime = new Date(date.getTime() + 30 * 60 * 1000); // 30分追加
+    const endHour = endDateTime.getHours();
+    const endMinute = endDateTime.getMinutes();
+
+    const formatTime = (h, m) => `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
+
+    return `${month}月${day}日 ${formatTime(startHour, startMinute)} ~ ${formatTime(endHour, endMinute)}`;
+}
+
 
 // 予約フォームの送信処理
 reservationForm.addEventListener('submit', async (event) => {
