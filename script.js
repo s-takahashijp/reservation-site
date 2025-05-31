@@ -94,6 +94,8 @@ reservationForm.addEventListener('submit', async (event) => {
 
     const selectedSchedule = scheduleSelect.value; // ★修正箇所: プルダウンの値をそのまま取得★
 
+    console.log("DEBUG: selectedSchedule (from website) = ", selectedSchedule);
+
     // 選択が行われていない場合のバリデーション
     if (!selectedSchedule) {
         formMessage.className = 'message error';
