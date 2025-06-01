@@ -1,4 +1,4 @@
-const GAS_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbx3xb670kI5EkRomw3n64udNIlZr-ioFqvgaPVD9ioywhS3cL3doqPTHXJXkXpWmOqyeg/exec'; // ★ここをあなたのGASウェブアプリのURLに置き換える★
+const GAS_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbwvXWEvPg3_v39-mvUboqAY4xpREExcdBmxHlSJfmLYk0U_RKBnkHdxTQGpvdvpOUhXXA/exec'; // ★ここをあなたのGASウェブアプリのURLに置き換える★
 
 const loadingElement = document.getElementById('loading');
 const reservationListElement = document.getElementById('reservation-list');
